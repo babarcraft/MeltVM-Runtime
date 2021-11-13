@@ -1,0 +1,74 @@
+VM - COMPONENETS -> TODO: Rename to COCRUNTIME
+    stack -> Has its size determened at the start of the program.
+    stack pointer -> Points to the top of the stack (Maximum unsigned value).
+    heap -> - Keeps a list of pointers.
+            - Is able to grow.
+            - Is freed at program exit.
+    registers -> - Registers 0 - 15 (Each maximum sized values).
+                 - Also contains the pointer stack.
+    heap pointer -> Points to the top of the heap stack (Maximum unsigned value).
+    instruction pointer -> Points to the current instruction.
+
+-----------------------------------
+            Stack Design
+
++-----------------------+           - Base pointer -> Points to the buttom of the stack.
+|                       |           - Stack pointer -> Points to the top of the stack.
+|                       |           ----------------------------------------------------
+|                       |           - Upon a function call ->
+|                       |               - The stack pointer, Base pointer, and Instruction pointer are
+|           1           |                 are pushed onto 'pointer stack register'.
+|           1           |                 After the function has retured, the previously saved state will
+|           1           |                 be swaped with the current state and the return value will be pushed onto
+|           1           |                 the stack.
+|===========1===========| <-- Current base pointer after function call
+|===========0===========| <-- Variable (i)
++-----------------------+
+
+-----------------------------------
+            Heap Design
+
+    - The heap will contain all of the allocated pointers
+    - It will free all of them at when the system exits
+
+-----------------------------------
+        Instruction Set
+
+    - const -> byte(size), ...(data)
+        pushes constant onto the stack
+    - push -> byte(size), size_t(offsetFromTop), byte(reg)
+        Pushes value in register 0 onto the stack
+    - pop -> byte(size), size_t(offsetFromTop), byte(reg)
+        Pops value from the stack in accordance to the offsetFromTop
+    - hpush -> byte(addr reg), size_t(size), size_t(offset_from_top), size_t(offset)
+    - hpop -> byte(addr reg), size_t(size), size_t(offset_from_top), size_t(offset)
+    - dup -> size_t(size), size_t(offset)
+    - mov -> byte(reg 1), byte(reg 2), byte(size)
+        Moves data between registers
+    - and, or, xor -> byte(reg 1), byte(reg 2)
+    - lt, mt, let, met, et
+    - add, sub, mul, div -> byte(reg1), byte(reg 2)
+    - inc, dec -> byte(reg)
+    - cmp -> byte(reg 1), byte(reg 2)
+    - je, jne, jzl, jzr, jzle, jzre -> size_t(addr)
+        jzl -> >
+        jzr -> <
+        jzle -> >=
+        jzre -> <=
+    - jmp -> size_t(addr)
+    - call -> size_t(addr), size_t(stack_top_offset) // Aka: args
+    - ret
+    - nop
+    - syscall -> unsigned int(syscall), ...(args)
+
+-----------------------------------
+        System calls
+    0 - alloc -> reg 0(size)
+    1 - dealloc -> reg 0(address)
+    2 - str_alloc -> args(string)
+    3 - write -> reg 0(pointer), reg 1(size), reg 2(file descriptor)
+    4 - read -> reg 0(pointer), reg 1(size), reg 2(file descriptor)
+
+===================================
+TODO:
+    - Solve the stack frame problem
